@@ -246,7 +246,7 @@ def get_telegram_users():
     for user in redmine.user.all():
         for cf in user.custom_fields:
             if cf.name == "telegram":
-                chatid = int(cf.value)
+                chatid = int(cf.value or 0)
                 if chatid > 0:
                     out[chatid] = SimpleNamespace(
                         name="{} {}".format(user.firstname, user.lastname),
