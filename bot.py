@@ -220,13 +220,13 @@ EXPRESIONES = (
     (r'/mios', tickets_me_open),
     (r'/abiertos', tickets_open),
     (r'/encurso', tickets_in_progress),
-    (r'/?(ticket_)?(?P<ticket_id>\d+)', ticket_info),
-    (r'/abre_(?P<ticket_id>\d+)', open_ticket),
-    (r'/coge_(?P<ticket_id>\d+)', ticket_assign),
-    (r'/suelta_(?P<ticket_id>\d+)', ticket_forget),
-    (r'/cierra_(?P<ticket_id>\d+)', ticket_close),
-    (r'/?(nota[ _])?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>\d+[hHmM]?)', ticket_note_with_time),
-    (r'/?(nota[ _])?(?P<ticket_id>\d+) (?P<mensaje>.*)', ticket_note),
+    (r'/?(ticket)?_?(?P<ticket_id>\d+)', ticket_info),
+    (r'/abre_?(?P<ticket_id>\d+)', open_ticket),
+    (r'/coge_?(?P<ticket_id>\d+)', ticket_assign),
+    (r'/suelta_?(?P<ticket_id>\d+)', ticket_forget),
+    (r'/cierra_?(?P<ticket_id>\d+)', ticket_close),
+    (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>\d+[hHmM]?)', ticket_note_with_time),
+    (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*)', ticket_note),
 )
 
 
