@@ -220,7 +220,7 @@ EXPRESIONES = (
     (r'/mios', tickets_me_open),
     (r'/abiertos', tickets_open),
     (r'/encurso', tickets_in_progress),
-    (r'/ticket_(?P<ticket_id>\d+)', ticket_info),
+    (r'/?(ticket_)?(?P<ticket_id>\d+)', ticket_info),
     (r'/abre_(?P<ticket_id>\d+)', open_ticket),
     (r'/coge_(?P<ticket_id>\d+)', ticket_assign),
     (r'/suelta_(?P<ticket_id>\d+)', ticket_forget),
