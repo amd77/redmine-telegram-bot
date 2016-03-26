@@ -185,10 +185,14 @@ def ticket_close(user, ticket_id):
         return "Acabas de cerrar el /ticket_{}: {}".format(ticket_id, issue.subject)
 
 
+def command_error(user):
+    return "Unknown command"
+
+
 def ticket_note(user, ticket_id, mensaje):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
     redmine.issue.update(ticket_id, notes=mensaje)
-    return "ok"
+    return "Anotado en el /ticket_{}".format(ticket_id)
 
 
 def ticket_note_with_time(user, ticket_id, mensaje, minutes):
@@ -220,11 +224,13 @@ EXPRESIONES = (
     (r'/mios', tickets_me_open),
     (r'/abiertos', tickets_open),
     (r'/encurso', tickets_in_progress),
-    (r'/?(ticket)?_?(?P<ticket_id>\d+)', ticket_info),
+    (r'/(ticket)?_?(?P<ticket_id>\d+)', ticket_info),
     (r'/abre_?(?P<ticket_id>\d+)', open_ticket),
     (r'/coge_?(?P<ticket_id>\d+)', ticket_assign),
     (r'/suelta_?(?P<ticket_id>\d+)', ticket_forget),
     (r'/cierra_?(?P<ticket_id>\d+)', ticket_close),
+    (r'/(\w+)', command_error),
+    # commands probably without leading /
     (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>\d+[hHmM]?)', ticket_note_with_time),
     (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*)', ticket_note),
 )
