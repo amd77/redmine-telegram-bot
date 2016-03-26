@@ -316,7 +316,7 @@ def command_all(message):
     user = TELEGRAM_USERS[chatid]
     msg = "No entiendo"
     for regex, func in EXPRESIONES:
-        m = re.fullmatch(regex, txt)
+        m = re.fullmatch(regex, txt, re.DOTALL)
         if m:
             d = m.groupdict()
             # arguments are: user and a dictionary with named items of the regexp
