@@ -315,24 +315,27 @@ def command_all(message):
     txt = message.text.strip()
     user = TELEGRAM_USERS[chatid]
     msg = "No entiendo"
-    for regex, func in EXPRESIONES:
-        m = re.fullmatch(regex, txt, re.DOTALL)
-        if m:
-            d = m.groupdict()
-            # arguments are: user and a dictionary with named items of the regexp
-            msg = func(user, **d)
-            if 'ticket_id' in d:
-                telegram_states.set(chatid, date=message.date, **d)
-            else:
-                telegram_states.clean(chatid)
-            break
-    else:
-        if message.chat.type == "private":
-            old = telegram_states.get(chatid)
-            if old and 'ticket_id' in old:
-                minutes = (message.date - old['date'])//60
-                msg = ticket_note_with_time(user, old['ticket_id'], txt, minutes)
-                telegram_states.set(chatid, date=message.date)
+    try:
+        for regex, func in EXPRESIONES:
+            m = re.fullmatch(regex, txt, re.DOTALL)
+            if m:
+                d = m.groupdict()
+                # arguments are: user and a dictionary with named items of the regexp
+                msg = func(user, **d)
+                if 'ticket_id' in d:
+                    telegram_states.set(chatid, date=message.date, **d)
+                else:
+                    telegram_states.clean(chatid)
+                break
+        else:
+            if message.chat.type == "private":
+                old = telegram_states.get(chatid)
+                if old and 'ticket_id' in old:
+                    minutes = (message.date - old['date'])//60
+                    msg = ticket_note_with_time(user, old['ticket_id'], txt, minutes)
+                    telegram_states.set(chatid, date=message.date)
+    except ValidationError as e:
+        msg = str(e)
 
     msg = msg.strip()
     print("----------Se le respondio------\n{}\n-----------".format(msg))
