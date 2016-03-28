@@ -125,8 +125,10 @@ def ticket_info(user, ticket_id):
         msg += "- estado: {} /cierra_{}\n".format(issue.status, ticket_id)
     else:
         msg += "- estado: {}\n".format(issue.status)
-    msg += "- asunto: {}\n".format(issue.subject)
-    msg += "- descripción: {}\n".format(issue.description)
+    if issue.subject:
+        msg += "- asunto: {}\n".format(issue.subject)
+    if issue.description:
+        msg += "- descripción: {}\n".format(issue.description)
     msg += "- url: {}issues/{}\n".format(settings.REDMINE_PUBLIC_URL, ticket_id)
     try:
         if issue.assigned_to.id == user.id:
@@ -135,6 +137,8 @@ def ticket_info(user, ticket_id):
             msg += "- cogido por: {} /coge_{}\n".format(issue.assigned_to, ticket_id)
     except ResourceAttrError:
         msg += "- sin coger /coge_{}\n".format(ticket_id)
+    for ij in issue.journals:
+        msg += "- nota {}: {}\n".format(ij.id, ij.notes.strip())
     return msg.strip()
 
 
@@ -363,3 +367,6 @@ bot.polling()
 #
 # user attributes:
 # ['contacts', 'deals', 'groups', 'id', 'issues', 'memberships', 'name', 'time_entries']
+#
+# issue journals
+# ['created_on', 'details', 'id', 'notes', 'user']
