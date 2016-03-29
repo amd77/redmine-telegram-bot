@@ -139,6 +139,8 @@ def ticket_info(user, ticket_id):
         msg += "- sin coger /coge_{}\n".format(ticket_id)
     for ij in issue.journals:
         msg += "- nota {}: {}\n".format(ij.id, ij.notes.strip())
+    for te in issue.time_entries:
+        msg += "- entrada {}: {} ({:.2f}h)\n".format(te.id, te.comments.strip(), te.hours)
     return msg.strip()
 
 
