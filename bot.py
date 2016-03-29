@@ -4,7 +4,7 @@
 from __future__ import print_function
 
 from redmine import Redmine
-from redmine.exceptions import ResourceAttrError
+from redmine.exceptions import ResourceAttrError, ValidationError
 from pprint import pprint
 from types import SimpleNamespace
 import datetime
