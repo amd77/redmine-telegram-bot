@@ -201,7 +201,7 @@ def ticket_note(user, ticket_id, mensaje):
     return "Anotado en el /ticket_{}".format(ticket_id)
 
 
-def ticket_note_with_time(user, ticket_id, mensaje, minutes):
+def ticket_time_entry(user, ticket_id, mensaje, minutes):
     if isinstance(minutes, str):
         if minutes[-1] in "hH":
             hours = int(minutes[:-1])
@@ -213,7 +213,6 @@ def ticket_note_with_time(user, ticket_id, mensaje, minutes):
         hours = minutes/60.
 
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    redmine.issue.update(ticket_id, notes=mensaje)
     redmine.time_entry.create(issue_id=ticket_id, hours=hours,
                               activity_id=settings.DEFAULT_ACTIVITY, comments=mensaje)
     return "Anotado que has trabajado {minutes} minutos en el /ticket_{i}.\n" \
@@ -237,7 +236,7 @@ EXPRESIONES = (
     (r'/cierra_?(?P<ticket_id>\d+)', ticket_close),
     (r'/(\w+)', command_error),
     # commands probably without leading /
-    (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>\d+[hHmM]?)', ticket_note_with_time),
+    (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>\d+[hHmM]?)', ticket_time_entry),
     (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*)', ticket_note),
 )
 
@@ -344,7 +343,7 @@ def command_all(message):
                 old = telegram_states.get(chatid)
                 if old and 'ticket_id' in old:
                     minutes = (message.date - old['date'])//60
-                    msg = ticket_note_with_time(user, old['ticket_id'], txt, minutes)
+                    msg = ticket_time_entry(user, old['ticket_id'], txt, minutes)
                     telegram_states.set(chatid, date=message.date)
     except ValidationError as e:
         msg = str(e)
