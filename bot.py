@@ -204,7 +204,7 @@ def ticket_note(user, ticket_id, mensaje):
 def ticket_time_entry(user, ticket_id, mensaje, minutes):
     if isinstance(minutes, str):
         if minutes[-1] in "hH":
-            hours = int(minutes[:-1])
+            hours = float(minutes[:-1])
         elif minutes[-1] in "mM":
             hours = float(minutes[:-1])/60.
         else:
@@ -236,7 +236,7 @@ EXPRESIONES = (
     (r'/cierra_?(?P<ticket_id>\d+)', ticket_close),
     (r'/(\w+)', command_error),
     # commands probably without leading /
-    (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>\d+[hHmM]?)', ticket_time_entry),
+    (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*) (?P<minutes>[\d.]+[hHmM]?)', ticket_time_entry),
     (r'/?(nota)?_?(?P<ticket_id>\d+) (?P<mensaje>.*)', ticket_note),
 )
 
