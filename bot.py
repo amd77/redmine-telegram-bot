@@ -4,7 +4,7 @@
 from __future__ import print_function
 
 from redmine import Redmine
-from redmine.exceptions import ResourceAttrError, ValidationError
+from redmine.exceptions import ResourceAttrError, ValidationError, ResourceNotFoundError
 from pprint import pprint
 from types import SimpleNamespace
 import datetime
@@ -117,7 +117,10 @@ def tickets_in_progress(user):
 
 def ticket_info(user, ticket_id):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    issue = redmine.issue.get(ticket_id)
+    try:
+        issue = redmine.issue.get(ticket_id)
+    except ResourceNotFoundError:
+        return "Ticket no se encuentra"
     msg = "Ticket {}:\n".format(ticket_id)
     msg += "- fecha: {}\n".format(issue.created_on)
     msg += "- proyecto: {}\n".format(issue.project)
@@ -146,7 +149,10 @@ def ticket_info(user, ticket_id):
 
 def open_ticket(user, ticket_id):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    issue = redmine.issue.get(ticket_id)
+    try:
+        issue = redmine.issue.get(ticket_id)
+    except ResourceNotFoundError:
+        return "Ticket no se encuentra"
     if issue.status.id == STATUS.NEW:
         return "El /ticket_{} ya esta abierto!".format(ticket_id)
     else:
@@ -156,7 +162,10 @@ def open_ticket(user, ticket_id):
 
 def ticket_assign(user, ticket_id):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    issue = redmine.issue.get(ticket_id)
+    try:
+        issue = redmine.issue.get(ticket_id)
+    except ResourceNotFoundError:
+        return "Ticket no se encuentra"
     try:
         if issue.assigned_to.id == user.id:
             return "El /ticket_{} ya es tuyo!".format(ticket_id)
@@ -168,7 +177,10 @@ def ticket_assign(user, ticket_id):
 
 def ticket_forget(user, ticket_id):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    issue = redmine.issue.get(ticket_id)
+    try:
+        issue = redmine.issue.get(ticket_id)
+    except ResourceNotFoundError:
+        return "Ticket no se encuentra"
     try:
         if issue.assigned_to.id == 0:
             return "El /ticket_{} ya esta suelto!".format(ticket_id)
@@ -183,7 +195,10 @@ def ticket_forget(user, ticket_id):
 
 def ticket_close(user, ticket_id):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    issue = redmine.issue.get(ticket_id)
+    try:
+        issue = redmine.issue.get(ticket_id)
+    except ResourceNotFoundError:
+        return "Ticket no se encuentra"
     if issue.status.id == STATUS.CLOSED:
         return "El /ticket_{} ya esta cerrado!".format(ticket_id)
     else:
@@ -197,7 +212,10 @@ def command_error(user):
 
 def ticket_note(user, ticket_id, mensaje):
     redmine = Redmine(settings.REDMINE_API_URL, key=settings.REDMINE_KEY, impersonate=user.login)
-    redmine.issue.update(ticket_id, notes=mensaje)
+    try:
+        redmine.issue.update(ticket_id, notes=mensaje)
+    except ResourceNotFoundError:
+        return "Ticket no se encuentra"
     return "Anotado en el /ticket_{}".format(ticket_id)
 
 
